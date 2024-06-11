@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import {
     AlertOutlined,
     AuditOutlined, BookOutlined,
@@ -7,9 +7,7 @@ import {
     PieChartOutlined, SecurityScanOutlined,
     SettingOutlined, SolutionOutlined,
 } from '@ant-design/icons';
-import {Layout, Menu, type MenuProps} from "antd";
-const {Sider} = Layout
-
+import {Menu, type MenuProps} from "antd";
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -62,15 +60,9 @@ const items: MenuItem[] = [
 ];
 
 const CSider = () => {
-    const [collapsed, setCollapsed] = useState(false);
 
     return (
-        <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-            <div className="demo-logo-vertical">
-                FÉNIX
-            </div>
-            <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items}/>
-        </Sider>
+        <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items}/>
     )
 }
 

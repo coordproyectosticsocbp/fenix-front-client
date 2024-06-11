@@ -9,14 +9,14 @@ const inter = Inter({subsets: ["latin"]});
 export const metadata: Metadata = {
     title: "Fénix",
     description: "SP software by BonnaTics",
+    icons: {
+        icon: 'favicon.icos'
+    }
 };
 
-export default function RootLayout(
-    {
-        children,
-    }: Readonly<{
-        children: React.ReactNode;
-    }>) {
+const RootLayout = ({children,}: {
+    children: React.ReactNode
+}) => {
     return (
         <html lang="en" style={{margin: 0, padding: 0}}>
         <body className={inter.className} style={{margin: 0, padding: 0}}>
@@ -27,5 +27,6 @@ export default function RootLayout(
         </main>
         </body>
         </html>
-    );
+    )
 }
+export default RootLayout

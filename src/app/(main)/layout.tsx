@@ -1,37 +1,34 @@
-'use client'
-import React from "react";
+'use client';
+import React, {ReactNode} from "react";
 import {Layout} from "antd";
-import CHeader from "@/components/Layout/Dashboard/Header/CHeader";
-import CFooter from "@/components/Layout/Dashboard/Footer/CFooter";
 import CSider from "@/components/Layout/Dashboard/Sidebar/CSider";
-import CBreadcrumb from "@/components/Layout/Dashboard/Breadcrumb/CBreadcrumb";
+import UserDropdown from "@/components/Layout/Dashboard/UserDropdown/UserDropdown";
 
-const {Content} = Layout
+const MainLayout= ({children,} : {
+    children: React.ReactNode
+}) => {
+    const {Header, Sider, Content, Footer} = Layout
 
-export default function MainLayout(
-    {
-        children,
-    }: Readonly<{
-        children: React.ReactNode;
-    }>) {
     return (
         <Layout style={{minHeight: '100vh'}}>
-            <CSider/>
+            <Header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div className="demo-logo">
+                    <img src="../favicon.ico" />
+                </div>
+                <UserDropdown />
+            </Header>
             <Layout>
-                <CHeader/>
-                <Content style={{margin: '0 16px', padding: '.8rem'}}>
-                    {/*<CBreadcrumb/>*/}
-                    <main style={{
-                        padding: 24,
-                        minHeight: 360,
-                        background: "lightgray",
-                        borderRadius: '1rem',
-                    }}>
-                        {children}
-                    </main>
+                <Sider collapsible>
+                    <CSider />
+                </Sider>
+                <Content style={{padding: '13px'}}>
+                    {children}
                 </Content>
-                <CFooter/>
+                <Footer></Footer>
             </Layout>
         </Layout>
-    );
+    )
+
 }
+
+export default MainLayout
