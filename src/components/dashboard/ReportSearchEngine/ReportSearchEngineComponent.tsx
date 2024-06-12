@@ -1,7 +1,6 @@
 'use client'
 import React, {useState} from "react";
-import {Col, ConfigProviderProps, Input, Row, Skeleton, Switch, Table, Tooltip} from 'antd';
-import {Button, Modal} from "antd";
+import {Button, Col, ConfigProviderProps, Input, Modal, Row, Skeleton, Table, Tooltip} from 'antd';
 import {SearchOutlined} from "@ant-design/icons";
 import {ValidatedReports} from "@/utils/ValidatedReports";
 
@@ -10,8 +9,9 @@ const ReportSearchEngineComponent: React.FC = () => {
 
     const [size, setSize] = useState<SizeType>('large')
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
     const [content, setContent] = useState([])
+    const [inputQuery, setInputQuery] = useState('')
 
     const columns = [
         {
@@ -33,18 +33,18 @@ const ReportSearchEngineComponent: React.FC = () => {
             title: 'NOMBRES',
             dataIndex: 'val_cr_firstnamepatient',
             key: 'val_cr_firstnamepatient',
-            render: (text:any) => <p>{text}</p>,
+            render: (text: any) => <p>{text}</p>,
         },
         {
             title: 'APELLIDO',
             dataIndex: 'val_cr_firstlastnamepatient',
             key: 'val_cr_firstlastnamepatient',
-            render: (text:any) => <p>{text}</p>,
+            render: (text: any) => <p>{text}</p>,
         },
         {
             title: 'TIPO CASO',
             key: 'caseType',
-            render: (_:any, record: any) => (
+            render: (_: any, record: any) => (
                 <p>{record.caseType.cas_t_name?.toUpperCase()}</p>
             )
         }
@@ -62,11 +62,26 @@ const ReportSearchEngineComponent: React.FC = () => {
         setIsModalOpen(false)
     }
 
-    const onChange = (checked: boolean) => {
+    const handleInputQuery = (event: any) => {
+        setInputQuery(event.target.value)
+    }
+
+    const onClick = () => {
+
+        if (!inputQuery.trim()) {
+            alert("Por favor ingresa algún valor en el campo de búsqueda.");
+            return;
+        }
+
+        setLoading(true)
 
         setTimeout(() => {
-            setLoading(!checked)
-            setContent(ValidatedReports)
+            setLoading(false)
+
+            const filterReport = ValidatedReports.filter((item: any) => item.val_cr_filingnumber.includes(inputQuery))
+
+            setContent(filterReport)
+
         }, 1000)
 
     }
@@ -92,12 +107,17 @@ const ReportSearchEngineComponent: React.FC = () => {
                 <div style={{padding: '1rem'}}>
                     <Row style={{marginBottom: '1rem'}}>
                         <Col flex={9}>
-                            <Input size={size} autoFocus placeholder="# Reporte, Nombre o Cédula" />
+                            <Input size={size}
+                                   autoFocus
+                                   placeholder="# Reporte, Nombre o Cédula"
+                                   onChange={handleInputQuery}
+                                   value={inputQuery}
+                            />
                         </Col>
-                        <Col flex={1} style={{ display: 'flex', alignItems: 'center', justifyContent: 'end'}}>
+                        <Col flex={1} style={{display: 'flex', alignItems: 'center', justifyContent: 'end'}}>
 
                             <Tooltip title="Buscar">
-                                <Button size={size} icon={<SearchOutlined />}>
+                                <Button size={size} icon={<SearchOutlined/>} onClick={onClick}>
                                     Buscar Caso
                                 </Button>
                             </Tooltip>
@@ -105,18 +125,15 @@ const ReportSearchEngineComponent: React.FC = () => {
                     </Row>
 
                     <Row>
-                        <Col>
-                            <Switch checked={!loading} onChange={onChange}  style={{ marginBottom: 16 }} />
-                        </Col>
-                    </Row>
-
-                    <Row>
                         <Col span={24}>
 
-                            <Skeleton loading={loading} />
-
+                            <Skeleton loading={loading}/>
                             {
-                                !loading ? <Table columns={columns} dataSource={content}  /> : undefined
+                                !loading && content.length
+                                    ? <Table columns={columns} dataSource={content}/>
+                                    : !loading && !content.length
+                                        ? <p style={{textAlign: 'center'}}>No se han encontrado registros</p>
+                                        : undefined
                             }
 
                         </Col>

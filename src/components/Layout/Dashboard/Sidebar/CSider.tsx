@@ -7,7 +7,7 @@ import {
     PieChartOutlined, SecurityScanOutlined,
     SettingOutlined, SolutionOutlined,
 } from '@ant-design/icons';
-import {Menu, type MenuProps} from "antd";
+import {ConfigProvider, Menu, type MenuProps} from "antd";
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -62,7 +62,7 @@ const items: MenuItem[] = [
 const CSider = () => {
 
     return (
-        <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items}/>
+        <Menu  style={{ background: '#ff9220' }} defaultSelectedKeys={['1']} mode="inline" items={items}/>
     )
 }
 
