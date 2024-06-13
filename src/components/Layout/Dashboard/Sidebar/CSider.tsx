@@ -1,15 +1,20 @@
-import React from "react";
+import React from "react"
 import {
     AlertOutlined,
-    AuditOutlined, BookOutlined,
+    AuditOutlined,
+    BookOutlined,
     DesktopOutlined,
-    FolderViewOutlined, IssuesCloseOutlined, MonitorOutlined,
-    PieChartOutlined, SecurityScanOutlined,
-    SettingOutlined, SolutionOutlined,
+    FolderViewOutlined,
+    IssuesCloseOutlined,
+    MonitorOutlined,
+    PieChartOutlined,
+    SecurityScanOutlined,
+    SettingOutlined,
+    SolutionOutlined,
 } from '@ant-design/icons';
-import {ConfigProvider, Menu, type MenuProps} from "antd";
+import {Menu, type MenuProps} from "antd"
 
-type MenuItem = Required<MenuProps>['items'][number];
+type MenuItem = Required<MenuProps>['items'][number]
 
 function getItem(
     label: React.ReactNode,
@@ -22,47 +27,51 @@ function getItem(
         icon,
         children,
         label,
-    } as MenuItem;
+    } as MenuItem
 }
 
 const items: MenuItem[] = [
     getItem('Dashboard', '1', <PieChartOutlined/>),
-    getItem('Notificaciones', '2', <AlertOutlined />),
-    getItem('Crear Reporte', '3', <SolutionOutlined />),
+    getItem('Notificaciones', '2', <AlertOutlined/>),
+    getItem('Crear Reporte', '3', <SolutionOutlined/>),
     getItem('Resumen', '4', <DesktopOutlined/>),
-    getItem('Validación', 'sub1', <SecurityScanOutlined />, [
+    getItem('Validación', 'sub1', <SecurityScanOutlined/>, [
         getItem('Validar', '5'),
         getItem('Casos para revisión', '6'),
     ]),
-    getItem('Análisis', 'sub2', <MonitorOutlined />, [
+    getItem('Análisis', 'sub2', <MonitorOutlined/>, [
         getItem('Asignación de casos', '7'),
         getItem('Mis Casos', '8'),
         getItem('Informes', '9'),
     ]),
-    getItem('Seguimientos', '10', <FolderViewOutlined />),
-    getItem('Planes de acción', 'sub3', <BookOutlined />, [
+    getItem('Seguimientos', '10', <FolderViewOutlined/>),
+    getItem('Planes de acción', 'sub3', <BookOutlined/>, [
         getItem('Planes Creados', '11'),
         getItem('Monitoreo', '12'),
     ]),
-    getItem('Análisis de riesgo', 'sub4', <AlertOutlined />, [
+    getItem('Análisis de riesgo', 'sub4', <AlertOutlined/>, [
         getItem('Resumen', '13'),
         getItem('Matriz de riesgo', '14'),
         getItem('Informe', '15'),
     ]),
-    getItem('Programa de SP', 'sub5', <AuditOutlined />, [
+    getItem('Programa de SP', 'sub5', <AuditOutlined/>, [
         getItem('Estrategias', '16'),
         getItem('Informe', '17'),
         getItem('Marco de sanciones', '18'),
     ]),
-    getItem('Cierre de ciclo', '19', <IssuesCloseOutlined />),
-    getItem('Indicadores', '20', <PieChartOutlined />),
-    getItem('Configuración', '21', <SettingOutlined />),
+    getItem('Cierre de ciclo', '19', <IssuesCloseOutlined/>),
+    getItem('Indicadores', '20', <PieChartOutlined/>),
+    getItem('Configuración', '21', <SettingOutlined/>),
 ];
 
 const CSider = () => {
 
     return (
-        <Menu  style={{ background: '#ff9220' }} defaultSelectedKeys={['1']} mode="inline" items={items}/>
+        <Menu
+            defaultSelectedKeys={['1']}
+            mode="inline"
+            items={items}
+        />
     )
 }
 

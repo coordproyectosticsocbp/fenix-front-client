@@ -2,7 +2,9 @@
 import React, {useState} from "react";
 import {Button, Col, ConfigProviderProps, Input, Modal, Row, Skeleton, Table, Tooltip} from 'antd';
 import {SearchOutlined} from "@ant-design/icons";
-import {ValidatedReports} from "@/utils/ValidatedReports";
+import {findOneReportValidateByConsecutive} from "@/api/dashboard";
+import {IReportSearchItem, IReportSearchList} from "@/utils/interfaces/dashboard/dashboard.interface";
+//import {ValidatedReports} from "@/utils/ValidatedReports";
 
 type SizeType = ConfigProviderProps['componentSize']
 const ReportSearchEngineComponent: React.FC = () => {
@@ -10,7 +12,7 @@ const ReportSearchEngineComponent: React.FC = () => {
     const [size, setSize] = useState<SizeType>('large')
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [loading, setLoading] = useState(false)
-    const [content, setContent] = useState([])
+    const [content, setContent] = useState<IReportSearchItem[]>([])
     const [inputQuery, setInputQuery] = useState('')
 
     const columns = [
@@ -66,23 +68,30 @@ const ReportSearchEngineComponent: React.FC = () => {
         setInputQuery(event.target.value)
     }
 
-    const onClick = () => {
+    const onClick = async () => {
 
         if (!inputQuery.trim()) {
             alert("Por favor ingresa algún valor en el campo de búsqueda.");
             return;
         }
 
-        setLoading(true)
+        try {
+            setLoading(true)
+            const filterReport = await findOneReportValidateByConsecutive(inputQuery)
+            console.log(filterReport)
+            setContent(filterReport)
+            setLoading(false)
+
+        } catch (e) {
+            console.log(e)
+        }
+        /*setLoading(true)
 
         setTimeout(() => {
             setLoading(false)
-
             const filterReport = ValidatedReports.filter((item: any) => item.val_cr_filingnumber.includes(inputQuery))
-
             setContent(filterReport)
-
-        }, 1000)
+        }, 1000)*/
 
     }
 
@@ -129,9 +138,9 @@ const ReportSearchEngineComponent: React.FC = () => {
 
                             <Skeleton loading={loading}/>
                             {
-                                !loading && content.length
+                                !loading
                                     ? <Table columns={columns} dataSource={content}/>
-                                    : !loading && !content.length
+                                    : !loading
                                         ? <p style={{textAlign: 'center'}}>No se han encontrado registros</p>
                                         : undefined
                             }
