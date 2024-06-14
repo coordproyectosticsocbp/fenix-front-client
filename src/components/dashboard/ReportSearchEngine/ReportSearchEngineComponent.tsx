@@ -1,9 +1,10 @@
 'use client'
 import React, {useState} from "react";
-import {Button, Col, ConfigProviderProps, Input, Modal, Row, Skeleton, Table, Tooltip} from 'antd';
+import {Button, Col, ConfigProviderProps, Input, Modal, Row, Skeleton, Table, Tag, Tooltip} from 'antd';
 import {SearchOutlined} from "@ant-design/icons";
 import {findOneReportValidateByConsecutive} from "@/api/dashboard";
-import {IReportSearchItem, IReportSearchList} from "@/utils/interfaces/dashboard/dashboard.interface";
+import {IReportSearchItem} from "@/utils/interfaces/dashboard/dashboard.interface";
+import {getColorByCaseType} from "@/utils/enums/caseTypeColor.enum";
 //import {ValidatedReports} from "@/utils/ValidatedReports";
 
 type SizeType = ConfigProviderProps['componentSize']
@@ -47,7 +48,12 @@ const ReportSearchEngineComponent: React.FC = () => {
             title: 'TIPO CASO',
             key: 'caseType',
             render: (_: any, record: any) => (
-                <p>{record.caseType.cas_t_name?.toUpperCase()}</p>
+                <>
+                    <Tag style={{color: '#000'}} color={getColorByCaseType(record?.caseType?.cas_t_name?.toUpperCase())}>
+                        {record.caseType.cas_t_name?.toUpperCase()}
+                    </Tag>
+                </>
+                /*<p>{record?.caseType?.cas_t_name?.toUpperCase()}</p>*/
             )
         }
     ]
@@ -61,6 +67,8 @@ const ReportSearchEngineComponent: React.FC = () => {
     }
 
     const handleCancel = () => {
+        setContent([])
+        setInputQuery('')
         setIsModalOpen(false)
     }
 
@@ -79,7 +87,7 @@ const ReportSearchEngineComponent: React.FC = () => {
             setLoading(true)
             const filterReport = await findOneReportValidateByConsecutive(inputQuery)
             console.log(filterReport)
-            setContent(filterReport)
+            setContent(filterReport || [])
             setLoading(false)
 
         } catch (e) {
@@ -99,7 +107,6 @@ const ReportSearchEngineComponent: React.FC = () => {
         <>
             <Button
                 icon={<SearchOutlined/>}
-
                 size={size}
                 onClick={showModal}
             >
@@ -110,7 +117,9 @@ const ReportSearchEngineComponent: React.FC = () => {
                 open={isModalOpen}
                 onOk={handleOk}
                 onCancel={handleCancel}
+                onClose={handleCancel}
                 width={1000}
+                footer={null}
             >
 
                 <div style={{padding: '1rem'}}>
@@ -138,9 +147,20 @@ const ReportSearchEngineComponent: React.FC = () => {
 
                             <Skeleton loading={loading}/>
                             {
-                                !loading
-                                    ? <Table columns={columns} dataSource={content}/>
-                                    : !loading
+                                !loading && content.length
+                                    ? <Table
+                                        columns={columns}
+                                        dataSource={content}
+                                        size={'small'}
+                                        onRow={(record, rowIndex) => {
+                                            return {
+                                                onClick: (event) => {
+                                                    alert(`click ${record.val_cr_filingnumber}`)
+                                                }
+                                            }
+                                        }}
+                                    />
+                                    : !loading && !content.length
                                         ? <p style={{textAlign: 'center'}}>No se han encontrado registros</p>
                                         : undefined
                             }

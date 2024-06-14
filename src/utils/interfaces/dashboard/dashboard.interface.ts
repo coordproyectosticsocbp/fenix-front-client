@@ -1,7 +1,7 @@
 
-export interface IReportSearchList {
+/*export interface IReportSearchList {
     reports: IReportSearchItem[]
-}
+}*/
 
 export interface IReportSearchItem {
     id: string
