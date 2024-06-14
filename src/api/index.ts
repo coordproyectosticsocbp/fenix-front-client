@@ -4,6 +4,7 @@ import LocalStorageService from "@/api/localstorage";
 
 let isRefreshing = false;
 let failedQueue: { reject: any; resolve: any }[] = [];
+const options = {}
 
 const processQueue = (error: Error | null, token = null) => {
     failedQueue.forEach((prom) => {
@@ -17,9 +18,24 @@ const processQueue = (error: Error | null, token = null) => {
 };
 
 // LocalstorageService
-const { getAccessToken, getRefreshToken, setToken, clearToken } =
+const {getAccessToken, getRefreshToken, setToken, clearToken} =
     LocalStorageService;
-const rest = axios.create();
+
+/* Axios Options */
+const rest = axios.create({
+    baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
+    timeout: 4000,
+    headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json; charset=utf-8'
+    }
+})
+
+rest.interceptors.response.use(
+    (response) => {
+        return response;
+    }
+)
 // Add a request interceptor
 /*rest.interceptors.request.use(
     (config) => {
@@ -104,4 +120,4 @@ rest.interceptors.response.use(
     }
 );*/
 
-export { rest };
+export {rest};
