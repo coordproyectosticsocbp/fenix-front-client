@@ -1,11 +1,20 @@
 import {urls} from "@/api/urls";
 import {rest} from "@/api";
-import {IReportSearchList} from "@/utils/interfaces/dashboard/dashboard.interface";
+import {IReportSearchItem} from "@/utils/interfaces/dashboard/dashboard.interface";
 
 export const findOneReportValidateByConsecutive = async (reportSearchValue: string) => {
-    const url = `${urls.fenix}/case-report-validate/findReportValidateByConsecutive/${reportSearchValue}`
 
-    const res = await rest.get<IReportSearchList>(url)
-    return res.data
+    try {
+
+        const url = `${urls.fenix}/case-report-validate/findReportValidateByConsecutive/${reportSearchValue}`
+        const {data} = await rest.get<IReportSearchItem[]>(url)
+        if (!data) {
+            return []
+        }
+        return data
+
+    } catch (error) {
+        throw new Error('Failed to fetch reports')
+    }
 
 }

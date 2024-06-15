@@ -13,6 +13,7 @@ import {
     SolutionOutlined,
 } from '@ant-design/icons';
 import {Menu, type MenuProps} from "antd"
+import {router} from "next/client";
 
 type MenuItem = Required<MenuProps>['items'][number]
 
@@ -29,6 +30,7 @@ function getItem(
         label,
     } as MenuItem
 }
+
 
 const items: MenuItem[] = [
     getItem('Dashboard', '1', <PieChartOutlined/>),

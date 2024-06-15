@@ -69,6 +69,7 @@ const ReportSearchEngineComponent: React.FC = () => {
     const handleCancel = () => {
         setContent([])
         setInputQuery('')
+        setLoading(false)
         setIsModalOpen(false)
     }
 
@@ -85,22 +86,17 @@ const ReportSearchEngineComponent: React.FC = () => {
 
         try {
             setLoading(true)
-            const filterReport = await findOneReportValidateByConsecutive(inputQuery)
-            console.log(filterReport)
-            setContent(filterReport || [])
+            const data = await findOneReportValidateByConsecutive(inputQuery)
+            if (!data) {
+                setContent([])
+            }
+            setContent(data)
             setLoading(false)
 
-        } catch (e) {
-            console.log(e)
+        } catch (error) {
+            setLoading(false)
+            console.log(error)
         }
-        /*setLoading(true)
-
-        setTimeout(() => {
-            setLoading(false)
-            const filterReport = ValidatedReports.filter((item: any) => item.val_cr_filingnumber.includes(inputQuery))
-            setContent(filterReport)
-        }, 1000)*/
-
     }
 
     return (
