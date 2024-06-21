@@ -6,7 +6,6 @@ export enum caseTypeReport {
     INDICATING_UNSAFE_CARE = 'Indicio de Atención Insegura',
     COMPLICATIONS = 'Complicaciones'
 }
-
 export const getColorByCaseType = (type: string) => {
     switch (type) {
         case caseTypeReport.RISK.toUpperCase():
