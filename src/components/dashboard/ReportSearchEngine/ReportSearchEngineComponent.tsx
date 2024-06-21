@@ -58,25 +58,15 @@ const ReportSearchEngineComponent: React.FC = () => {
         }
     ]
 
-    const showModal = () => {
-        setIsModalOpen(true)
-    }
-
-    const handleOk = () => {
-        setIsModalOpen(false)
-    }
-
+    const showModal = () => setIsModalOpen(true)
+    //const handleOk = () => setIsModalOpen(false)
     const handleCancel = () => {
         setContent([])
         setInputQuery('')
         setLoading(false)
         setIsModalOpen(false)
     }
-
-    const handleInputQuery = (event: any) => {
-        setInputQuery(event.target.value)
-    }
-
+    const handleInputQuery = (event: any) => setInputQuery(event.target.value)
     const onClick = async () => {
 
         if (!inputQuery.trim()) {
@@ -111,7 +101,6 @@ const ReportSearchEngineComponent: React.FC = () => {
             <Modal
                 title="Búsqueda de reporte"
                 open={isModalOpen}
-                onOk={handleOk}
                 onCancel={handleCancel}
                 onClose={handleCancel}
                 width={1000}

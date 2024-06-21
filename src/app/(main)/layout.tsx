@@ -1,5 +1,5 @@
 'use client';
-import React, {ReactNode} from "react";
+import React from "react";
 import {ConfigProvider, Layout} from "antd";
 import CSider from "@/components/Layout/Dashboard/Sidebar/CSider";
 import UserDropdown from "@/components/Layout/Dashboard/UserDropdown/UserDropdown";

@@ -1,4 +1,5 @@
-import React from "react"
+'use client'
+import React, {useState} from "react"
 import {
     AlertOutlined,
     AuditOutlined,
@@ -13,10 +14,9 @@ import {
     SolutionOutlined,
 } from '@ant-design/icons';
 import {Menu, type MenuProps} from "antd"
-import {router} from "next/client";
+import { useRouter } from 'next/navigation'
 
 type MenuItem = Required<MenuProps>['items'][number]
-
 function getItem(
     label: React.ReactNode,
     key: React.Key,
@@ -31,10 +31,9 @@ function getItem(
     } as MenuItem
 }
 
-
 const items: MenuItem[] = [
-    getItem('Dashboard', '1', <PieChartOutlined/>),
-    getItem('Notificaciones', '2', <AlertOutlined/>),
+    getItem('Dashboard', '/dashboard', <PieChartOutlined/>),
+    getItem('Notificaciones', '/notifications', <AlertOutlined/>),
     getItem('Crear Reporte', '3', <SolutionOutlined/>),
     getItem('Resumen', '4', <DesktopOutlined/>),
     getItem('Validación', 'sub1', <SecurityScanOutlined/>, [
@@ -63,16 +62,30 @@ const items: MenuItem[] = [
     ]),
     getItem('Cierre de ciclo', '19', <IssuesCloseOutlined/>),
     getItem('Indicadores', '20', <PieChartOutlined/>),
-    getItem('Configuración', '21', <SettingOutlined/>),
+    getItem('Configuración', '21', <SettingOutlined/>, [
+        getItem('Asociaciones', '22', '', [
+            getItem('Tipo de Sucesos','/configuration/associations'),
+            getItem('Sucesos','24'),
+            getItem('Análisis Tools','25'),
+        ]),
+        getItem('Riesgos','26'),
+        getItem('Estrategias de SP','27'),
+    ]),
 ];
 
 const CSider = () => {
+
+    const router = useRouter()
+    const handleMenuClick = (menu: any) => {
+        return router.push(menu.key);
+    }
 
     return (
         <Menu
             defaultSelectedKeys={['1']}
             mode="inline"
             items={items}
+            onClick={handleMenuClick}
         />
     )
 }
