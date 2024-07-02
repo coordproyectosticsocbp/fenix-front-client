@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Button, Form, Input, Modal, Select} from "antd";
 import {ClearOutlined, SaveOutlined} from "@ant-design/icons";
 import {ICaseTypeInterfaceItem} from "@/utils/interfaces/configuration/caseType.interface";
-import {findAllCaseTypes} from "@/api/configuration";
+import {findAllCaseTypes} from "@/api/configuration/caseTypes";
 
 type FieldType = {
     caseType: number,
@@ -25,7 +25,7 @@ const CreateStrategyModal = ({visible, onClose}: modalProps) => {
 
     const [loadingCaseTypes, setLoadingCaseTypes] = useState(true)
     const [caseTypes, setCaseTypes] = useState<ICaseTypeInterfaceItem[]>([])
-    const [selectedCaseType, setSelectedCaseType] = useState('')
+    const [selectedCaseType, setSelectedCaseType] = useState(null)
 
     const listCaseTypes = async () => {
 
@@ -45,12 +45,12 @@ const CreateStrategyModal = ({visible, onClose}: modalProps) => {
         }
     }
 
-    useEffect(() => {
+    useEffect( () => {
         if (visible) listCaseTypes()
     }, [visible]);
 
-    const handleChange = (event: any) => {
-        setSelectedCaseType(event.target.value)
+    const handleChange = (value: any) => {
+        setSelectedCaseType(value)
     }
 
 
@@ -88,21 +88,18 @@ const CreateStrategyModal = ({visible, onClose}: modalProps) => {
                     <Select
                         showSearch
                         placeholder={'Selecciona el tipo de caso'}
-                        allowClear={true}
                         value={selectedCaseType}
                         onChange={handleChange}
+                        defaultValue={null}
                         options={(caseTypes || []).map(d => ({
                             value: d.id,
                             label: d.cas_t_name
                         }))}
                         loading={loadingCaseTypes}
-                    >
-                        {/*<Option value="1">Riesgo</Option>
-                            <Option value="2">Evento Adverso</Option>
-                            <Option value="3">Incidente</Option>
-                            <Option value="4">Indicio de Atención Insegura</Option>
-                            <Option value="5">Complicaciones</Option>*/}
-                    </Select>
+                        filterSort={(optionA, optionB) =>
+                            (optionA?.value ?? 0) - (optionB?.value ?? 0)
+                        }
+                    />
 
                 </Form.Item>
 
