@@ -3,6 +3,8 @@ import {Button, Form, Input, Modal, Select} from "antd";
 import {ClearOutlined, SaveOutlined} from "@ant-design/icons";
 import {ICaseTypeInterfaceItem} from "@/utils/interfaces/configuration/caseType.interface";
 import {findAllCaseTypes} from "@/api/configuration/caseTypes";
+import {ICreateEventType} from "@/utils/interfaces/configuration/eventType.interface";
+import {createEventType} from "@/api/configuration/eventTypes";
 
 type FieldType = {
     caseType: number,
@@ -26,11 +28,14 @@ const CreateStrategyModal = ({visible, onClose}: modalProps) => {
     const [loadingCaseTypes, setLoadingCaseTypes] = useState(true)
     const [caseTypes, setCaseTypes] = useState<ICaseTypeInterfaceItem[]>([])
     const [selectedCaseType, setSelectedCaseType] = useState(null)
+    const [formData, setFormData] = useState<ICreateEventType>({
+        eve_t_casetype_id_fk: null,
+        eve_t_name: '',
+        eve_t_description: ''
+    })
 
     const listCaseTypes = async () => {
-
         try {
-
             //setLoadingCaseTypes(true)
             const data = await findAllCaseTypes()
             if (!data) {
@@ -38,7 +43,6 @@ const CreateStrategyModal = ({visible, onClose}: modalProps) => {
             }
             setCaseTypes(data)
             setLoadingCaseTypes(false)
-
         } catch (error) {
             setLoadingCaseTypes(false)
             console.log(error)
@@ -49,10 +53,20 @@ const CreateStrategyModal = ({visible, onClose}: modalProps) => {
         if (visible) listCaseTypes()
     }, [visible]);
 
-    const handleChange = (value: any) => {
-        setSelectedCaseType(value)
+    const handleChange = (event: any) => {
+        const {name, value} = event.target
+        setFormData({...formData, [name]: value})
     }
 
+    const handleSubmit = async (event: any) => {
+        event.preventDefault()
+        const response =  await createEventType(formData)
+            .then(() => console.log('Formulario enviado correctamente')) // Handle success response
+            .catch(() => console.error('Error al enviar el formulario')) // Handle error response
+
+    }
+
+    //const handleChange = (value: any) => setSelectedCaseType(value) -- Esta era la funcion anterior para el tipo de caso
 
     return (
         <Modal
@@ -76,6 +90,7 @@ const CreateStrategyModal = ({visible, onClose}: modalProps) => {
                 autoComplete="off"
                 style={{maxWidth: 600, padding: '1rem 0'}}
                 {...layout}
+                onFinish={handleSubmit}
             >
 
                 <Form.Item<FieldType>
@@ -88,7 +103,7 @@ const CreateStrategyModal = ({visible, onClose}: modalProps) => {
                     <Select
                         showSearch
                         placeholder={'Selecciona el tipo de caso'}
-                        value={selectedCaseType}
+                        value={formData.eve_t_casetype_id_fk}
                         onChange={handleChange}
                         defaultValue={null}
                         options={(caseTypes || []).map(d => ({
@@ -107,14 +122,14 @@ const CreateStrategyModal = ({visible, onClose}: modalProps) => {
                     label="Nombre de la Estrategia:"
                     rules={[{required: true}]}
                 >
-                    <Input placeholder="Nombre de la estrategia"/>
+                    <Input onChange={handleChange} placeholder="Nombre de la estrategia" value={formData.eve_t_name}/>
                 </Form.Item>
 
                 <Form.Item<FieldType>
                     label="Descripción de la estrategia"
                     rules={[{required: true}]}
                 >
-                    <TextArea placeholder="Descripción de la estrategia"/>
+                    <TextArea onChange={handleChange} placeholder="Descripción de la estrategia" value={formData.eve_t_description}/>
                 </Form.Item>
 
             </Form>
