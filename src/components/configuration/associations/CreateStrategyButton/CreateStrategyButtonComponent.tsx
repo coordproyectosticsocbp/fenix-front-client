@@ -1,5 +1,5 @@
 'use client'
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {PlusOutlined} from "@ant-design/icons";
 import {Button} from "antd";
 import CreateStrategyModal
@@ -14,15 +14,15 @@ const CreateStrategyButtonComponent: React.FC = () => {
     return (
         <>
             <Button
-                type="dashed"
                 icon={<PlusOutlined/>}
                 iconPosition={'end'}
                 onClick={showModal}
+                style={{ background: '#f28322', color: '#ffffff' }}
             >
                 Crear Estrategia
             </Button>
 
-            <CreateStrategyModal visible={isModalOpen} onClose={closeModal} />
+            <CreateStrategyModal visible={isModalOpen} onClose={closeModal}/>
 
         </>
     )

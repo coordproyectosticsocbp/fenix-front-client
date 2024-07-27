@@ -1,10 +1,12 @@
 import React, {useEffect, useState} from "react";
-import {Button, Form, Input, Modal, Select} from "antd";
+import {Button, Form, Input, Modal, notification, Select} from "antd";
 import {ClearOutlined, SaveOutlined} from "@ant-design/icons";
 import {ICaseTypeInterfaceItem} from "@/utils/interfaces/configuration/caseType.interface";
 import {findAllCaseTypes} from "@/api/configuration/caseTypes";
 import {ICreateEventType} from "@/utils/interfaces/configuration/eventType.interface";
 import {createEventType} from "@/api/configuration/eventTypes";
+
+type NotificationType = 'success' | 'info' | 'warning' | 'error';
 
 type FieldType = {
     caseType: number,
@@ -25,6 +27,7 @@ interface modalProps {
 
 const CreateStrategyModal = ({visible, onClose}: modalProps) => {
 
+    const [api, contextHolder] = notification.useNotification();
     const [loadingCaseTypes, setLoadingCaseTypes] = useState(true)
     const [caseTypes, setCaseTypes] = useState<ICaseTypeInterfaceItem[]>([])
     const [selectedCaseType, setSelectedCaseType] = useState(null)
@@ -38,9 +41,8 @@ const CreateStrategyModal = ({visible, onClose}: modalProps) => {
         try {
             //setLoadingCaseTypes(true)
             const data = await findAllCaseTypes()
-            if (!data) {
-                setCaseTypes([])
-            }
+            if (!data) setCaseTypes([])
+
             setCaseTypes(data)
             setLoadingCaseTypes(false)
         } catch (error) {
@@ -49,22 +51,41 @@ const CreateStrategyModal = ({visible, onClose}: modalProps) => {
         }
     }
 
-    useEffect( () => {
+    useEffect(() => {
         if (visible) listCaseTypes()
     }, [visible]);
 
-    const handleChange = (event: any) => {
-        const {name, value} = event.target
-        setFormData({...formData, [name]: value})
-    }
+
+    const handleChange = (value, name) => {
+        setFormData({...formData, [name]: value});
+    };
 
     const handleSubmit = async (event: any) => {
         event.preventDefault()
-        const response =  await createEventType(formData)
-            .then(() => console.log('Formulario enviado correctamente')) // Handle success response
-            .catch(() => console.error('Error al enviar el formulario')) // Handle error response
+        const response = await createEventType(formData)
+            .then(() => {
+                setFormData({
+                    eve_t_casetype_id_fk: null,
+                    eve_t_name: '',
+                    eve_t_description: ''
+                })
+                openNotificationWithIcon('success')
+                console.log('Formulario enviado correctamente')
+            }) // Handle success response
+            .catch((error) => {
+                console.error(error.message)
+                console.error('Error al enviar el formulario')
+            }) // Handle error response
 
     }
+
+    const openNotificationWithIcon = (type: NotificationType) => {
+        api.success({
+            message: 'Notification Title',
+            description:
+                'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
+        });
+    };
 
     //const handleChange = (value: any) => setSelectedCaseType(value) -- Esta era la funcion anterior para el tipo de caso
 
@@ -79,7 +100,10 @@ const CreateStrategyModal = ({visible, onClose}: modalProps) => {
                 <Button key={'back'} type={'primary'} style={{background: '#FFB996'}} icon={<ClearOutlined/>}>
                     Limpiar
                 </Button>,
-                <Button key={'submit'} type={'primary'} icon={<SaveOutlined/>}>
+                <Button key={'submit'} type={'primary'}
+                        icon={<SaveOutlined/>}
+                        onClick={handleSubmit}
+                >
                     Crear Estrategia
                 </Button>
             ]}
@@ -100,21 +124,19 @@ const CreateStrategyModal = ({visible, onClose}: modalProps) => {
                         message: 'Debes seleccionar el tipo de caso.'
                     }]}
                 >
-                    <Select
-                        showSearch
-                        placeholder={'Selecciona el tipo de caso'}
-                        value={formData.eve_t_casetype_id_fk}
-                        onChange={handleChange}
-                        defaultValue={null}
-                        options={(caseTypes || []).map(d => ({
-                            value: d.id,
-                            label: d.cas_t_name
-                        }))}
-                        loading={loadingCaseTypes}
-                        filterSort={(optionA, optionB) =>
-                            (optionA?.value ?? 0) - (optionB?.value ?? 0)
+                    <Select defaultValue={null}
+                            placeholder={'Seleccione un tipo de caso'}
+                            onChange={(value) => handleChange(value, 'eve_t_casetype_id_fk')}
+                            value={formData.eve_t_casetype_id_fk}
+                    >
+                        {
+                            caseTypes?.map((item: any) => (
+                                <Select.Option key={item.id} value={item.id}>
+                                    {item.cas_t_name}
+                                </Select.Option>
+                            ))
                         }
-                    />
+                    </Select>
 
                 </Form.Item>
 
@@ -122,14 +144,17 @@ const CreateStrategyModal = ({visible, onClose}: modalProps) => {
                     label="Nombre de la Estrategia:"
                     rules={[{required: true}]}
                 >
-                    <Input onChange={handleChange} placeholder="Nombre de la estrategia" value={formData.eve_t_name}/>
+                    <Input onChange={(e) => handleChange(e.target.value, 'eve_t_name')}
+                           placeholder="Nombre de la estrategia"
+                           value={formData.eve_t_name}/>
                 </Form.Item>
 
                 <Form.Item<FieldType>
                     label="Descripción de la estrategia"
                     rules={[{required: true}]}
                 >
-                    <TextArea onChange={handleChange} placeholder="Descripción de la estrategia" value={formData.eve_t_description}/>
+                    <TextArea onChange={(e) => handleChange(e.target.value, 'eve_t_description')}
+                              placeholder="Descripción de la estrategia" value={formData.eve_t_description}/>
                 </Form.Item>
 
             </Form>
